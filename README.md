@@ -1,7 +1,7 @@
 
 # README.md
 
-#  Banco de Agricultura - Sistema Bancario Frontend
+#  Banco de Agricultura - Sistema Bancario Frontend UDB
 
 Sistema de gestión bancaria desarrollado con React + Vite + Material UI.
 
