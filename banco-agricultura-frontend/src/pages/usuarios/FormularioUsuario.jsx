@@ -2,14 +2,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import {
-  Box,
-  Grid,
-  TextField,
-  Button,
-  MenuItem,
-  Alert
-} from '@mui/material';
+import { Box, Grid, TextField, Button, MenuItem, Alert } from '@mui/material';
 import { Save, Cancel } from '@mui/icons-material';
 import useUsuarios from '../../api/hooks/useUsuarios';
 
@@ -34,17 +27,11 @@ const usuarioSchema = z.object({
     .string()
     .min(2, 'El nombre debe tener mínimo 2 caracteres')
     .max(50, 'Máximo 50 caracteres'),
-  apellido: z
-    .string()
-    .min(2, 'El apellido debe tener mínimo 2 caracteres')
-    .max(50, 'Máximo 50 caracteres'),
+
   dui: z
     .string()
     .regex(/^\d{8}-\d$/, 'Formato de DUI inválido (ej: 12345678-9)'),
-  email: z
-    .string()
-    .email('Email inválido')
-    .max(100, 'Máximo 100 caracteres'),
+  email: z.string().email('Email inválido').max(100, 'Máximo 100 caracteres'),
   telefono: z
     .string()
     .regex(/^\d{4}-\d{4}$/, 'Formato de teléfono inválido (ej: 7123-4567)'),
@@ -52,21 +39,17 @@ const usuarioSchema = z.object({
     .string()
     .min(5, 'La dirección debe tener mínimo 5 caracteres')
     .max(200, 'Máximo 200 caracteres'),
-  fechaNacimiento: z
-    .string()
-    .min(1, 'La fecha de nacimiento es requerida'),
-  rol: z
-    .enum(['ADMIN', 'EMPLEADO', 'CLIENTE'], {
-      errorMap: () => ({ message: 'Selecciona un rol válido' })
-    }),
-  sucursalId: z
-    .number()
-    .min(1, 'Debes seleccionar una sucursal'),
+  rol: z.enum(
+    ['Admin', 'Cajero', 'Cliente', 'GerenteSucursal', 'GerenteGeneral'],
+    {
+      errorMap: () => ({ message: 'Selecciona un rol válido' }),
+    }
+  ),
   password: z
     .string()
     .min(8, 'La contraseña debe tener mínimo 8 caracteres')
     .optional()
-    .or(z.literal(''))
+    .or(z.literal('')),
 });
 
 const FormularioUsuario = ({ usuario, onClose }) => {
@@ -77,7 +60,7 @@ const FormularioUsuario = ({ usuario, onClose }) => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset
+    reset,
   } = useForm({
     resolver: zodResolver(usuarioSchema),
     defaultValues: usuario || {
@@ -90,8 +73,8 @@ const FormularioUsuario = ({ usuario, onClose }) => {
       fechaNacimiento: '',
       rol: 'CLIENTE',
       sucursalId: 1,
-      password: ''
-    }
+      password: '',
+    },
   });
 
   useEffect(() => {
@@ -121,28 +104,26 @@ const FormularioUsuario = ({ usuario, onClose }) => {
     { id: 1, nombre: 'Central' },
     { id: 2, nombre: 'Sucursal Norte' },
     { id: 3, nombre: 'Sucursal Este' },
-    { id: 4, nombre: 'Sucursal Sur' }
+    { id: 4, nombre: 'Sucursal Sur' },
   ];
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-
+    <Box component='form' onSubmit={handleSubmit(onSubmit)}>
       {/* informacion importante */}
 
-      <Alert severity="info" sx={{ mb: 3 }}>
-        {isEditing 
+      <Alert severity='info' sx={{ mb: 3 }}>
+        {isEditing
           ? 'Editando usuario existente. Deja la contraseña vacia para mantener la actual'
           : 'Completa todos los campos para crear un nuevo usuario'}
       </Alert>
 
       <Grid container spacing={3}>
-
         {/* Nombre */}
 
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
-            label="Nombre"
+            label='Nombre'
             {...register('nombre')}
             error={!!errors.nombre}
             helperText={errors.nombre?.message}
@@ -155,7 +136,7 @@ const FormularioUsuario = ({ usuario, onClose }) => {
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
-            label="Apellido"
+            label='Apellido'
             {...register('apellido')}
             error={!!errors.apellido}
             helperText={errors.apellido?.message}
@@ -168,8 +149,8 @@ const FormularioUsuario = ({ usuario, onClose }) => {
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
-            label="DUI"
-            placeholder="12345678-9"
+            label='DUI'
+            placeholder='12345678-9'
             {...register('dui')}
             error={!!errors.dui}
             helperText={errors.dui?.message || 'Formato: 12345678-9'}
@@ -182,8 +163,8 @@ const FormularioUsuario = ({ usuario, onClose }) => {
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
-            label="Email"
-            type="email"
+            label='Email'
+            type='email'
             {...register('email')}
             error={!!errors.email}
             helperText={errors.email?.message}
@@ -196,8 +177,8 @@ const FormularioUsuario = ({ usuario, onClose }) => {
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
-            label="Teléfono"
-            placeholder="7123-4567"
+            label='Teléfono'
+            placeholder='7123-4567'
             {...register('telefono')}
             error={!!errors.telefono}
             helperText={errors.telefono?.message || 'Formato: 7123-4567'}
@@ -210,8 +191,8 @@ const FormularioUsuario = ({ usuario, onClose }) => {
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
-            label="Fecha de Nacimiento"
-            type="date"
+            label='Fecha de Nacimiento'
+            type='date'
             {...register('fechaNacimiento')}
             error={!!errors.fechaNacimiento}
             helperText={errors.fechaNacimiento?.message}
@@ -225,7 +206,7 @@ const FormularioUsuario = ({ usuario, onClose }) => {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            label="Dirección"
+            label='Dirección'
             multiline
             rows={2}
             {...register('direccion')}
@@ -241,15 +222,17 @@ const FormularioUsuario = ({ usuario, onClose }) => {
           <TextField
             fullWidth
             select
-            label="Rol"
+            label='Rol'
             {...register('rol')}
             error={!!errors.rol}
             helperText={errors.rol?.message}
             disabled={isSubmitting}
           >
-            <MenuItem value="ADMIN">👑 Administrador</MenuItem>
-            <MenuItem value="EMPLEADO">👨‍💼 Empleado</MenuItem>
-            <MenuItem value="CLIENTE">👤 Cliente</MenuItem>
+            <MenuItem value='Admin'>👑 Administrador</MenuItem>
+            <MenuItem value='Cliente'>👨‍💼 cliente</MenuItem>
+            <MenuItem value='Cajero'>👤 cajero</MenuItem>
+            <MenuItem value='GerenteSucursal'>👨‍💼 Gerente Sucursal</MenuItem>
+            <MenuItem value='GerenteGeneral'>👨‍💼 Gerente General</MenuItem>
           </TextField>
         </Grid>
 
@@ -259,13 +242,13 @@ const FormularioUsuario = ({ usuario, onClose }) => {
           <TextField
             fullWidth
             select
-            label="Sucursal"
+            label='Sucursal'
             {...register('sucursalId', { valueAsNumber: true })}
             error={!!errors.sucursalId}
             helperText={errors.sucursalId?.message}
             disabled={isSubmitting}
           >
-            {sucursales.map(sucursal => (
+            {sucursales.map((sucursal) => (
               <MenuItem key={sucursal.id} value={sucursal.id}>
                 {sucursal.nombre}
               </MenuItem>
@@ -279,10 +262,13 @@ const FormularioUsuario = ({ usuario, onClose }) => {
           <TextField
             fullWidth
             label={isEditing ? 'Nueva Contraseña (opcional)' : 'Contraseña'}
-            type="password"
+            type='password'
             {...register('password')}
             error={!!errors.password}
-            helperText={errors.password?.message || (isEditing ? 'Deja vacío para mantener la contraseña actual' : '')}
+            helperText={
+              errors.password?.message ||
+              (isEditing ? 'Deja vacío para mantener la contraseña actual' : '')
+            }
             disabled={isSubmitting}
           />
         </Grid>
@@ -292,7 +278,7 @@ const FormularioUsuario = ({ usuario, onClose }) => {
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
         <Button
-          variant="outlined"
+          variant='outlined'
           startIcon={<Cancel />}
           onClick={onClose}
           disabled={isSubmitting}
@@ -301,25 +287,29 @@ const FormularioUsuario = ({ usuario, onClose }) => {
             color: '#666',
             '&:hover': {
               borderColor: '#666',
-              bgcolor: '#F5F5F5'
-            }
+              bgcolor: '#F5F5F5',
+            },
           }}
         >
           Cancelar
         </Button>
         <Button
-          type="submit"
-          variant="contained"
+          type='submit'
+          variant='contained'
           startIcon={<Save />}
           disabled={isSubmitting}
           sx={{
             bgcolor: '#0E9A9A',
             '&:hover': {
-              bgcolor: '#0A7070'
-            }
+              bgcolor: '#0A7070',
+            },
           }}
         >
-          {isSubmitting ? 'Guardando...' : (isEditing ? 'Actualizar' : 'Crear Usuario')}
+          {isSubmitting
+            ? 'Guardando...'
+            : isEditing
+            ? 'Actualizar'
+            : 'Crear Usuario'}
         </Button>
       </Box>
     </Box>

@@ -19,7 +19,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Alert
+  Alert,
 } from '@mui/material';
 import {
   Add,
@@ -27,28 +27,13 @@ import {
   Edit,
   Delete,
   Visibility,
-  PersonAdd
+  PersonAdd,
 } from '@mui/icons-material';
 
-import useUsuarios from '../../api/hooks/useUsuarios'; 
+import useUsuarios from '../../api/hooks/useUsuarios';
 import FormularioUsuario from './FormularioUsuario';
 import { formatDate } from '@utils/formatters';
-import { Crown, Briefcase, User, HelpCircle } from "lucide-react";
-
-/**
-    Que hara Lista de Usuarios?
-  ============================================
-  
-   Ver todos los usuarios en tabla
-   Buscar por nombre DUI o email
-   Crear nuevo usuario
-   Editar usuario existente
-   Eliminar usuario
-   Filtrar por rol
-   Indicadores de estado
-  
-  ============================================
- */
+import { Crown, Briefcase, User, HelpCircle } from 'lucide-react';
 
 const ListaUsuarios = () => {
   const { usuarios, loading, deleteUsuario, searchByDUI } = useUsuarios(true);
@@ -58,16 +43,13 @@ const ListaUsuarios = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [usuarioToDelete, setUsuarioToDelete] = useState(null);
 
-  // busqueda filtrada de usuarios
-
-  const filteredUsuarios = usuarios.filter(usuario =>
-    usuario.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    usuario.apellido?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    usuario.dui?.includes(searchTerm) ||
-    usuario.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsuarios = usuarios.filter(
+    (usuario) =>
+      usuario.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      usuario.apellido?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      usuario.dui?.includes(searchTerm) ||
+      usuario.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // crear nuevo usuario
 
   const handleCreate = () => {
     setSelectedUsuario(null);
@@ -128,13 +110,13 @@ const ListaUsuarios = () => {
   const getRolIcon = (rol) => {
     switch (rol) {
       case 'ADMIN':
-        return <Crown size={20} color="#FFD700" />;
+        return <Crown size={20} color='#FFD700' />;
       case 'EMPLEADO':
-        return <Briefcase size={20} color="#4A5568" />;
+        return <Briefcase size={20} color='#4A5568' />;
       case 'CLIENTE':
-        return <User size={20} color="#3182CE" />;
+        return <User size={20} color='#3182CE' />;
       default:
-        return <HelpCircle size={20} color="gray" />;
+        return <HelpCircle size={20} color='gray' />;
     }
   };
 
@@ -148,35 +130,36 @@ const ListaUsuarios = () => {
 
   return (
     <Box>
-
       {/* encabezado */}
 
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        mb: 3,
-        flexWrap: 'wrap',
-        gap: 2
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+          flexWrap: 'wrap',
+          gap: 2,
+        }}
+      >
         <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: 'white' }}>
+          <Typography variant='h4' fontWeight='bold' sx={{ color: 'white' }}>
             Gestión de Usuarios
           </Typography>
-          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)' }}>
+          <Typography variant='body2' sx={{ color: 'rgba(255,255,255,0.8)' }}>
             Administra los usuarios del sistema bancario
           </Typography>
         </Box>
         <Button
-          variant="contained"
+          variant='contained'
           startIcon={<PersonAdd />}
           onClick={handleCreate}
           sx={{
             bgcolor: 'white',
             color: '#0E9A9A',
             '&:hover': {
-              bgcolor: 'rgba(255,255,255,0.9)'
-            }
+              bgcolor: 'rgba(255,255,255,0.9)',
+            },
           }}
         >
           Nuevo Usuario
@@ -188,25 +171,25 @@ const ListaUsuarios = () => {
       <Paper sx={{ p: 2, mb: 3, bgcolor: 'white' }}>
         <TextField
           fullWidth
-          placeholder="Buscar por nombre, apellido, DUI o email..."
+          placeholder='Buscar por nombre, apellido, DUI o email...'
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
             startAdornment: (
-              <InputAdornment position="start">
+              <InputAdornment position='start'>
                 <Search sx={{ color: '#0E9A9A' }} />
               </InputAdornment>
-            )
+            ),
           }}
           sx={{
             '& .MuiOutlinedInput-root': {
               '&:hover fieldset': {
-                borderColor: '#0E9A9A'
+                borderColor: '#0E9A9A',
               },
               '&.Mui-focused fieldset': {
-                borderColor: '#0E9A9A'
-              }
-            }
+                borderColor: '#0E9A9A',
+              },
+            },
           }}
         />
       </Paper>
@@ -214,7 +197,7 @@ const ListaUsuarios = () => {
       {/* mostrar resultados */}
 
       <Box sx={{ mb: 2 }}>
-        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.9)' }}>
+        <Typography variant='body2' sx={{ color: 'rgba(255,255,255,0.9)' }}>
           Mostrando {filteredUsuarios.length} de {usuarios.length} usuarios
         </Typography>
       </Box>
@@ -224,10 +207,10 @@ const ListaUsuarios = () => {
       {filteredUsuarios.length === 0 ? (
         <Paper sx={{ p: 6, textAlign: 'center', bgcolor: 'white' }}>
           <Search sx={{ fontSize: 60, color: '#CCC', mb: 2 }} />
-          <Typography variant="h6" color="text.secondary" gutterBottom>
+          <Typography variant='h6' color='text.secondary' gutterBottom>
             No se encontraron usuarios
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant='body2' color='text.secondary'>
             Prueba otro tipo de busqueda
           </Typography>
         </Paper>
@@ -236,74 +219,86 @@ const ListaUsuarios = () => {
           <Table>
             <TableHead sx={{ bgcolor: '#F5F5F5' }}>
               <TableRow>
-                <TableCell><strong>Nombre Completo</strong></TableCell>
-                <TableCell><strong>DUI</strong></TableCell>
-                <TableCell><strong>Email</strong></TableCell>
-                <TableCell><strong>Teléfono</strong></TableCell>
-                <TableCell><strong>Rol</strong></TableCell>
-                <TableCell><strong>Sucursal</strong></TableCell>
-                <TableCell><strong>Estado</strong></TableCell>
-                <TableCell align="center"><strong>Acciones</strong></TableCell>
+                <TableCell>
+                  <strong>Nombre Completo</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>DUI</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Email</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Teléfono</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Rol</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Sucursal</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Estado</strong>
+                </TableCell>
+                <TableCell align='center'>
+                  <strong>Acciones</strong>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredUsuarios.map((usuario) => (
-                <TableRow 
-                  key={usuario.id} 
+                <TableRow
+                  key={usuario.id}
                   hover
                   sx={{ '&:hover': { bgcolor: '#F9F9F9' } }}
                 >
                   <TableCell>
                     <Box>
-                      <Typography variant="body2" fontWeight="bold">
+                      <Typography variant='body2' fontWeight='bold'>
                         {usuario.nombre} {usuario.apellido}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant='caption' color='text.secondary'>
                         Registrado: {formatDate(usuario.fechaCreacion)}
                       </Typography>
                     </Box>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2" fontFamily="monospace">
+                    <Typography variant='body2' fontFamily='monospace'>
                       {usuario.dui}
                     </Typography>
                   </TableCell>
-                  <TableCell>{usuario.email}</TableCell>
+                  <TableCell>{usuario.correo}</TableCell>
                   <TableCell>{usuario.telefono}</TableCell>
                   <TableCell>
                     <Chip
-                      label={`${getRolIcon(usuario.rol)} ${usuario.rol}`}
+                      label={` ${usuario.rol}`}
                       color={getRolColor(usuario.rol)}
-                      size="small"
+                      size='small'
                     />
                   </TableCell>
                   <TableCell>{usuario.sucursal}</TableCell>
                   <TableCell>
-                    <Chip
-                      label={usuario.estado ? 'ACTIVO' : 'INACTIVO'}
-                      color={usuario.estado ? 'success' : 'default'}
-                      size="small"
-                    />
+                    <Chip label={'ACTIVO'} color={'success'} size='small' />
                   </TableCell>
-                  <TableCell align="center">
-                    <Tooltip title="Ver detalles">
-                      <IconButton size="small" sx={{ color: '#0E9A9A' }}>
+                  <TableCell align='center'>
+                    <Tooltip title='Ver detalles'>
+                      <IconButton size='small' sx={{ color: '#0E9A9A' }}>
                         <Visibility />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Editar">
-                      <IconButton 
-                        size="small" 
+                    <Tooltip title='Editar'>
+                      <IconButton
+                        size='small'
                         sx={{ color: '#FFA726' }}
                         onClick={() => handleEdit(usuario)}
                       >
                         <Edit />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Eliminar">
+                    <Tooltip title='Eliminar'>
                       <IconButton
-                        size="small"
-                        color="error"
+                        size='small'
+                        color='error'
                         onClick={() => handleDeleteClick(usuario)}
                       >
                         <Delete />
@@ -319,10 +314,10 @@ const ListaUsuarios = () => {
 
       {/* formulario crear editar */}
 
-      <Dialog 
-        open={openDialog} 
+      <Dialog
+        open={openDialog}
         onClose={handleCloseDialog}
-        maxWidth="md"
+        maxWidth='md'
         fullWidth
       >
         <DialogTitle sx={{ bgcolor: '#0E9A9A', color: 'white' }}>
@@ -338,29 +333,40 @@ const ListaUsuarios = () => {
 
       {/* mensaje confirmacion eliminacion de usuario */}
 
-      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
         <DialogTitle sx={{ color: '#0E9A9A' }}>
           Confirmar Eliminacion
         </DialogTitle>
         <DialogContent>
-          <Alert severity="warning" sx={{ mb: 2 }}>
+          <Alert severity='warning' sx={{ mb: 2 }}>
             Esta accion no se puede deshacer
           </Alert>
           <Typography>
-            ¿Estas seguro de eliminar al usuario <strong>{usuarioToDelete?.nombre} {usuarioToDelete?.apellido}</strong>?
+            ¿Estas seguro de eliminar al usuario{' '}
+            <strong>
+              {usuarioToDelete?.nombre} {usuarioToDelete?.apellido}
+            </strong>
+            ?
           </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+          <Typography
+            variant='caption'
+            color='text.secondary'
+            sx={{ mt: 1, display: 'block' }}
+          >
             DUI: {usuarioToDelete?.dui}
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)} color="inherit">
+          <Button onClick={() => setDeleteDialogOpen(false)} color='inherit'>
             Cancelar
           </Button>
-          <Button 
-            onClick={handleDeleteConfirm} 
-            color="error" 
-            variant="contained"
+          <Button
+            onClick={handleDeleteConfirm}
+            color='error'
+            variant='contained'
             disabled={loading}
           >
             {loading ? 'Eliminando...' : 'Eliminar'}

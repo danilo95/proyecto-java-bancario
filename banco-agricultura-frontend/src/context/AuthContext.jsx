@@ -1,92 +1,100 @@
-// src/context/AuthContext.jsx
-import { createContext, useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useContext, useEffect, useState } from 'react';
+import axiosInstance from '../api/axios.config';
 
-const AuthContext = createContext();
+const LOGIN_URL = '/auth/login';
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
+const AuthContext = createContext(null);
 
-  // LOGIN SIMULADO (para demo sin backend)
-  const login = async (email, password) => {
-    // Simular delay de red
-    await new Promise(resolve => setTimeout(resolve, 1000));
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem('user');
+    return stored ? JSON.parse(stored) : null;
+  });
 
-    // Validar credenciales de demo
-    const demoUsers = {
-      'admin@banco.com': {
-        id: 1,
-        nombre: 'Juan Administrador',
-        email: 'admin@banco.com',
-        rol: 'ADMIN',
-        permisos: ['VER_TODO', 'CREAR', 'EDITAR', 'ELIMINAR']
-      },
-      'empleado@banco.com': {
-        id: 2,
-        nombre: 'María Empleada',
-        email: 'empleado@banco.com',
-        rol: 'EMPLEADO',
-        permisos: ['VER_CUENTAS', 'CREAR_CUENTAS']
-      },
-      'cliente@banco.com': {
-        id: 3,
-        nombre: 'Pedro Cliente',
-        email: 'cliente@banco.com',
-        rol: 'CLIENTE',
-        permisos: ['VER_PROPIAS']
-      }
-    };
+  const [token, setToken] = useState(
+    () => localStorage.getItem('token') || null
+  );
 
-    const validPasswords = {
-      'admin@banco.com': 'admin123',
-      'empleado@banco.com': 'emp123',
-      'cliente@banco.com': 'cli123'
-    };
+  const isAuthenticated = Boolean(token);
 
-    if (demoUsers[email] && validPasswords[email] === password) {
-      const userData = demoUsers[email];
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
-      localStorage.setItem('token', 'demo-token-' + Date.now());
-      navigate('/dashboard');
-      return { success: true };
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem('token', token);
     } else {
-      return { success: false, message: 'Credenciales incorrectas' };
+      localStorage.removeItem('token');
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
+
+  const login = async (email, password) => {
+    try {
+      const { data } = await axiosInstance.post(LOGIN_URL, {
+        correo: email,
+        password,
+      });
+
+      const { token: apiToken, usuario } = data;
+
+      const userData = {
+        idUsuario: usuario.idUsuario,
+        nombre: usuario.nombre,
+        correo: usuario.correo,
+        rol: usuario.rol,
+      };
+
+      setToken(apiToken);
+      setUser(userData);
+
+      localStorage.setItem('token', apiToken);
+      localStorage.setItem('user', JSON.stringify(userData));
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+
+      let message = 'Error al iniciar sesión';
+
+      if (error.response?.data?.message) {
+        message = error.response.data.message;
+      } else if (error.response?.data?.detalle) {
+        message = error.response.data.detalle;
+      }
+
+      return { success: false, message };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    setToken(null);
     setUser(null);
-    navigate('/login');
-  };
-
-  const hasRole = (role) => {
-    return user?.rol === role;
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   };
 
   const value = {
     user,
+    token,
+    isAuthenticated,
     login,
     logout,
-    hasRole,
-    isAuthenticated: !!user,
-    loading: false
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth debe usarse dentro de AuthProvider');
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error('useAuth debe usarse dentro de un <AuthProvider>');
   }
-  return context;
+  return ctx;
 };
+
+export default AuthProvider;
